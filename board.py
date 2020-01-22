@@ -6,12 +6,15 @@ class Board:
         self.player2_queen = -self.player2
         self.empty = 0
         self.board = [
-            [self.player2, self.empty, self.player2, self.empty, self.player2, self.empty, self.player2, self.empty],
             [self.empty, self.player2, self.empty, self.player2, self.empty, self.player2, self.empty, self.player2],
             [self.player2, self.empty, self.player2, self.empty, self.player2, self.empty, self.player2, self.empty],
+            [self.empty, self.player2, self.empty, self.player2, self.empty, self.player2, self.empty, self.player2],
             [self.empty for i in range(0, 8)],
             [self.empty for i in range(0, 8)],
-            [self.empty, self.player1, self.empty, self.player1, self.empty, self.player1, self.empty, self.player1],
             [self.player1, self.empty, self.player1, self.empty, self.player1, self.empty, self.player1, self.empty],
-            [self.empty, self.player1, self.empty, self.player1, self.empty, self.player1, self.empty, self.player1]
+            [self.empty, self.player1, self.empty, self.player1, self.empty, self.player1, self.empty, self.player1],
+            [self.player1, self.empty, self.player1, self.empty, self.player1, self.empty, self.player1, self.empty]
         ]
+
+    def update_board(self):
+        pass
