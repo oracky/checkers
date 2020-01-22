@@ -34,3 +34,9 @@ class Player:
 
     def set_player_name(self, name):
         self.name = name
+
+    def del_piece(self, pos):
+        for i, piece in enumerate(self.pieces_list):
+            if piece.position == pos:
+                del self.pieces_list[i]
+                break

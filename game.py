@@ -52,18 +52,19 @@ class Game(Settings):
                                      pygame.Rect(pos[0] * self.tile_width, pos[1] * self.tile_height,
                                                  self.tile_width, self.tile_height))
                     pygame.display.flip()
-
-        pygame.draw.rect(self.screen, color, pygame.Rect(position[0] * self.tile_width, position[1] * self.tile_height,
-                                                         self.tile_width, self.tile_height))
-        pygame.display.flip()
+        else:
+            pygame.draw.rect(self.screen, color, pygame.Rect(position[0] * self.tile_width, position[1] * self.tile_height,
+                                                             self.tile_width, self.tile_height))
+            pygame.display.flip()
 
     def move_piece(self, new_position, current_position, player=1):
         self.reset_tile(current_position, self.color2)
         color = self.player1_color if player == 1 else self.player2_color
+        turn = self.player1 if player == 1 else self.player2
         pygame.draw.circle(self.screen, color, (self.piece_center[0] * (2 * new_position[0] + 1),
                            self.piece_center[1] * (2 * new_position[1] + 1)), self.piece_radius)
         pygame.display.flip()
-        self.update_piece(new_position, current_position)
+        self.update_piece(new_position, current_position, turn.value)
 
     def update_piece(self, new_position, current_position, player=1):
         turn = self.player1 if player == 1 else self.player2
@@ -90,17 +91,52 @@ class Game(Settings):
         north_west = (pos[0]-1, pos[1]-1)
         south_east = (pos[0]+1, pos[1]+1)
         south_west = (pos[0]-1, pos[1]+1)
+
         if player == 1:
-            if north_east not in self.player1 and north_east[0] < 8 and north_east[1] >= 0:
+            if (north_east not in self.player1 and north_east not in self.player2) and north_east[0] < 8 and north_east[1] >= 0:
                 moves.append(north_east)
-            if north_west not in self.player1 and north_west[0] >= 0 and north_west[1] >= 0:
+            if (north_west not in self.player1 and north_west not in self.player2) and north_west[0] >= 0 and north_west[1] >= 0:
                 moves.append(north_west)
         else:
-            if south_east not in self.player2 and south_east[0] < 8 and south_east[1] < 8:
+            if (south_east not in self.player2 and south_east not in self.player1) and south_east[0] < 8 and south_east[1] < 8:
                 moves.append(south_east)
-            if south_west not in self.player2 and south_west[0] >= 0 and south_west[1] < 8:
+            if (south_west not in self.player2 and south_west not in self.player1) and south_west[0] >= 0 and south_west[1] < 8:
                 moves.append(south_west)
+        moves += self.find_kills(pos, player)
         return moves
+
+    def find_kills(self, pos, value=1):
+        kills = []
+        north_east_short = (pos[0] + 1, pos[1] - 1)
+        north_west_short = (pos[0] - 1, pos[1] - 1)
+        south_east_short = (pos[0] + 1, pos[1] + 1)
+        south_west_short = (pos[0] - 1, pos[1] + 1)
+        north_east = (pos[0] + 2, pos[1] - 2)
+        north_west = (pos[0] - 2, pos[1] - 2)
+        south_east = (pos[0] + 2, pos[1] + 2)
+        south_west = (pos[0] - 2, pos[1] + 2)
+
+        player = self.player1 if value == 1 else self.player2
+        opponent = self.player2 if value == 1 else self.player1
+
+        if (north_east_short in opponent and north_east not in player and north_east not in opponent)\
+                and north_east[0] < 8 and north_east[1] >= 0:
+            kills.append(north_east)
+        if (north_west_short in opponent and north_west not in player and north_west not in opponent)\
+                and north_west[0] >= 0 and north_west[1] >= 0:
+            kills.append(north_west)
+        if (south_east_short in opponent and south_east not in player and south_east not in opponent)\
+                and south_east[0] < 8 and south_east[1] < 8:
+            kills.append(south_east)
+        if (south_west_short in opponent and south_west not in player and south_west not in opponent)\
+                and south_west[0] >= 0 and south_west[1] < 8:
+            kills.append(south_west)
+        return kills
+
+    def is_kill(self, after_pos, before_pos):
+        if abs(after_pos[0] - before_pos[0]) == 2:
+            return True
+        return False
 
     def display_moves(self, moves):
         for move in moves:
