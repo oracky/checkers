@@ -36,12 +36,12 @@ class Game(Settings):
                 if (row % 2 != 0 and column % 2 == 0) or (row % 2 == 0 and column % 2 != 0):
                     pygame.draw.circle(self.screen, self.player2_color,
                                        (self.piece_center[0] * (2 * row + 1), self.piece_center[1] * (2 * column + 1)),
-                                       self.piece_radius)  # draw player1 pieces
+                                       self.piece_radius)  # draw player2 pieces
                     pygame.display.flip()
                 else:
                     pygame.draw.circle(self.screen, self.player1_color,
                                        (self.piece_center[0] * (2 * row + 1), self.piece_center[1] * (2 * column + 11)),
-                                       self.piece_radius)  # draw player2 pieces
+                                       self.piece_radius)  # draw player1 pieces
                     pygame.display.flip()
 
     def reset_tile(self, position, color, *args):

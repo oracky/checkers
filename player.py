@@ -10,6 +10,8 @@ class Player:
         self.selected_piece = False
         self.current_position = (0, 0)
         self.possible_moves = []
+        self.winner = False
+        self.no_more_moves = True
         if self.value != 1:
             self.pieces_list = [
                 Piece((1, 0)), Piece((3, 0)), Piece((5, 0)), Piece((7, 0)),
