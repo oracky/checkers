@@ -9,7 +9,10 @@ class Game(Settings):
         self.player1 = Player(player1_name, self.player1_color, 1)
         self.player2 = Player(player2_name, self.player2_color, 2)
         self.game_over = False
-        self.board = Board(self.player1.value, self.player2.value)
+        self.turn = True
+        pygame.init()
+        self.font = pygame.font.SysFont('Arial', 25)
+        self.winner_font = pygame.font.SysFont('Arial', 45)
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption('Warcaby')
         self.screen.fill(self.background_color)
@@ -141,3 +144,23 @@ class Game(Settings):
     def display_moves(self, moves):
         for move in moves:
             self.color_tile(move, self.move_color)
+
+    def draw_turn_rect(self, value=1):
+        player = self.player1 if value == 1 else self.player2
+        pygame.draw.rect(self.screen, player.color,
+                         pygame.Rect(8.5 * self.tile_width, 4 * self.tile_height, self.tile_width * 2,
+                                     self.tile_height))
+        pygame.display.flip()
+        self.screen.blit(self.font.render(player.name, True, self.color1),
+                         (8.6 * self.tile_width + 10, 4.3 * self.tile_height))
+        pygame.display.update()
+
+    def draw_winner_rect(self, value=1):
+        player = self.player1 if value == 1 else self.player2
+        pygame.draw.rect(self.screen, player.color,
+                         pygame.Rect(0, 2 * self.tile_height, self.screen_width,
+                                     4 * self.tile_height))
+        pygame.display.flip()
+        self.screen.blit(self.winner_font.render(f"{player.name} WINS!!!", True, self.color1),
+                         (self.screen_width // 4, self.screen_height // 2))
+        pygame.display.update()

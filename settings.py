@@ -1,5 +1,5 @@
 class Settings:
-    screen_width = 840
+    screen_width = 880
     screen_height = 640
     background_color = (220, 220, 220)
     color1 = (255, 255, 255)                     # white
