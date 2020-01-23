@@ -7,8 +7,8 @@ class Settings:
     player1_color = (255, 0, 0)                  # red
     player2_color = (0, 0, 255)                  # blue
     move_color = (153, 77, 0)                    # brown
-    queen1_color = (102, 204, 255)               # light-blue
-    queen2_color = (255, 0, 102)                 # raspberry
+    queen2_color = (102, 204, 255)               # light-blue
+    queen1_color = (255, 0, 102)                 # raspberry
     tile_width = int(screen_height/8)
     tile_height = int(screen_height/8)
     piece_center = (int(tile_width/2), int(tile_height/2))

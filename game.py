@@ -1,13 +1,12 @@
 import pygame
 from settings import Settings
 from player import Player
-from board import Board
 
 
 class Game(Settings):
     def __init__(self, player1_name="Player1", player2_name="Player2"):
-        self.player1 = Player(player1_name, self.player1_color, 1)
-        self.player2 = Player(player2_name, self.player2_color, 2)
+        self.player1 = Player(player1_name, self.player1_color, 1, self.queen1_color)
+        self.player2 = Player(player2_name, self.player2_color, 2, self.queen2_color)
         self.game_over = False
         self.turn = True
         pygame.init()
@@ -60,14 +59,20 @@ class Game(Settings):
                                                              self.tile_width, self.tile_height))
             pygame.display.flip()
 
-    def move_piece(self, new_position, current_position, player=1):
+    def move_piece(self, new_position, current_position, value=1):
         self.reset_tile(current_position, self.color2)
-        color = self.player1_color if player == 1 else self.player2_color
-        turn = self.player1 if player == 1 else self.player2
+        player = self.player1 if value == 1 else self.player2
+        color = (0, 0, 0)
+        for piece in player.pieces_list:
+            if piece.position == current_position:
+                if piece.queen:
+                    color = player.queen_color
+                else:
+                    color = player.color
         pygame.draw.circle(self.screen, color, (self.piece_center[0] * (2 * new_position[0] + 1),
                            self.piece_center[1] * (2 * new_position[1] + 1)), self.piece_radius)
         pygame.display.flip()
-        self.update_piece(new_position, current_position, turn.value)
+        self.update_piece(new_position, current_position, player.value)
 
     def update_piece(self, new_position, current_position, player=1):
         turn = self.player1 if player == 1 else self.player2
@@ -164,3 +169,24 @@ class Game(Settings):
         self.screen.blit(self.winner_font.render(f"{player.name} WINS!!!", True, self.color1),
                          (self.screen_width // 4, self.screen_height // 2))
         pygame.display.update()
+
+    def is_queen(self, pos, value=1):
+        player = self.player1 if value == 1 else self.player2
+        if player.value == 1:
+            if pos[1] == 0:
+                return True
+        else:
+            if pos[1] == 7:
+                return True
+        return False
+
+    def promote_to_queen(self, pos, value=1, next_jump = False):
+        player = self.player1 if value == 1 else self.player2
+        for piece in player.pieces_list:
+            if piece.position == pos:
+                piece.queen = True
+        if next_jump:
+            pygame.draw.circle(self.screen, player.queen_color, (self.piece_center[0] * (2 * pos[0] + 1),
+                                                    self.piece_center[1] * (2 * pos[1] + 1)),
+                               self.piece_radius)
+            pygame.display.flip()

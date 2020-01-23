@@ -2,10 +2,11 @@ from piece import Piece
 
 
 class Player:
-    def __init__(self, name, color, value=1,):
+    def __init__(self, name, color, value=1, queen_color=(255, 255, 255)):
         self.name = name
         self.color = color
         self.value = value
+        self.queen_color = queen_color
         self.turn = False
         self.selected_piece = False
         self.current_position = (0, 0)
