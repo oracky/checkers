@@ -35,6 +35,19 @@ def main():
                     game.turn = False
                     break
 
+                # Checking if there are still possible moves
+                for piece in player.pieces_list:
+                    temp_pos = piece.position
+                    temp_possible_moves = game.find_moves(temp_pos, player.value)
+                    if len(temp_possible_moves) != 0:
+                        player.no_more_moves = False
+                        break
+                if player.no_more_moves:
+                    opponent.winner = True
+                    game.game_over = True
+                    game.turn = False
+                    break
+
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         sys.exit(0)
@@ -75,7 +88,7 @@ def main():
 
                                     # Check if piece became queen
                                     if game.is_queen(move, player.value):
-                                        game.promote_to_queen(move, player.value,True)
+                                        game.promote_to_queen(move, player.value, True)
 
                                     # Looking for kill to make
                                     if game.is_kill(move, player.current_position):
@@ -96,7 +109,7 @@ def main():
 
                                             # Checking if piece became queen
                                             if game.is_queen(move, player.value):
-                                                game.promote_to_queen(move,player.value)
+                                                game.promote_to_queen(move, player.value)
 
                                             move = player.possible_moves[0]
                                             player.possible_moves = game.find_kills(move, player.value)
