@@ -91,7 +91,7 @@ def main():
                                         game.promote_to_queen(move, player.value, True)
 
                                     # Looking for kill to make
-                                    if game.is_kill(move, player.current_position):
+                                    if game.is_kill(move, player.current_position, player.value):
                                         row, column = (move[0]+player.current_position[0])//2,\
                                                      (move[1]+player.current_position[1])//2
                                         opponent.del_piece((row, column))
@@ -102,15 +102,15 @@ def main():
                                         while len(player.possible_moves) > 0:
                                             time.sleep(0.5)
                                             game.move_piece(player.possible_moves[0], move, player.value)
+
+                                            # Check if piece became queen
+                                            if game.is_queen(player.possible_moves[0], player.value):
+                                                game.promote_to_queen(player.possible_moves[0], player.value, True)
+
                                             row, column = (move[0] + player.possible_moves[0][0]) // 2, \
                                                           (move[1] + player.possible_moves[0][1]) // 2
                                             opponent.del_piece((row, column))
                                             game.reset_tile((row, column), game.color2)
-
-                                            # Checking if piece became queen
-                                            if game.is_queen(move, player.value):
-                                                game.promote_to_queen(move, player.value)
-
                                             move = player.possible_moves[0]
                                             player.possible_moves = game.find_kills(move, player.value)
                                     player.selected_piece = False

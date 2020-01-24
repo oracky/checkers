@@ -111,6 +111,11 @@ class Game(Settings):
             if (south_west not in self.player2 and south_west not in self.player1) and south_west[0] >= 0 and south_west[1] < 8:
                 moves.append(south_west)
         moves += self.find_kills(pos, player)
+        gamer = self.player1 if player == 1 else self.player2
+        for piece in gamer.pieces_list:
+            if piece.position == pos and piece.queen:
+                moves += self.find_queen_moves(pos, player)
+                break
         return moves
 
     def find_kills(self, pos, value=1):
@@ -141,9 +146,99 @@ class Game(Settings):
             kills.append(south_west)
         return kills
 
-    def is_kill(self, after_pos, before_pos):
+    def find_queen_moves(self, pos, value=1):
+        player = self.player1 if value == 1 else self.player2
+        opponent = self.player2 if value == 1 else self.player1
+        moves = []
+        find_obstacle_enemy = False
+        i = 1  #index
+
+        # South-East direction
+        while 8 > pos[0] + i >= 0 and 8 > pos[1] + i >= 0:
+            if (pos[0] + i, pos[1] + i) in player:
+                break
+            elif (pos[0] + i, pos[1] + i) in opponent:
+                if (pos[0] + i + 1, pos[1] + i + 1) in opponent:
+                    break
+                else:
+                    moves.append((pos[0] + i + 1, pos[1] + i + 1))
+                    i += 1
+            else:
+                moves.append((pos[0] + i, pos[1] + i))
+            i += 1
+        i = 1
+        # South-West direction
+        while 8 > pos[0] - i >= 0 and 8 > pos[1] + i >= 0:
+            if (pos[0] - i, pos[1] + i) in player:
+                break
+            elif (pos[0] - i, pos[1] + i) in opponent:
+                if (pos[0] - i - 1, pos[1] + i + 1) in opponent:
+                    break
+                else:
+                    moves.append((pos[0] - i - 1, pos[1] + i + 1))
+                    i += 1
+            else:
+                moves.append((pos[0] - i, pos[1] + i))
+            i += 1
+        i = 1
+        # North-East direction
+        while 8 > pos[0] + i >= 0 and 8 > pos[1] - i >= 0:
+            if (pos[0] + i, pos[1] - i) in player:
+                break
+            elif (pos[0] + i, pos[1] - i) in opponent:
+                if (pos[0] + i + 1, pos[1] - i - 1) in opponent:
+                    break
+                else:
+                    moves.append((pos[0] + i + 1, pos[1] - i - 1))
+                    i += 1
+            else:
+                moves.append((pos[0] + i, pos[1] - i))
+            i += 1
+        i = 1
+        # North-West direction
+        while 8 > pos[0] - i >= 0 and 8 > pos[1] - i >= 0:
+            if (pos[0] - i, pos[1] - i) in player:
+                break
+            elif (pos[0] - i, pos[1] - i) in opponent:
+                if (pos[0] - i - 1, pos[1] - i - 1) in opponent:
+                    break
+                else:
+                    moves.append((pos[0] - i - 1, pos[1] - i - 1))
+                    i += 1
+            else:
+                moves.append((pos[0] - i, pos[1] - i))
+            i += 1
+        return moves
+
+    def is_kill(self, after_pos, before_pos, value=1):
         if abs(after_pos[0] - before_pos[0]) == 2:
             return True
+        player = self.player1 if value == 1 else self.player2
+        opponent = self.player2 if value == 1 else self.player1
+
+        # if lower than 0 then north else south
+        first_destination = after_pos[1] - before_pos[1]
+
+        # if lower than 0 then west else east
+        second_destination = after_pos[0] - before_pos[0]
+
+        for piece in player.pieces_list:
+            if piece.position == after_pos and piece.queen:
+                for i, tile in enumerate(range(1, (abs(before_pos[0] - after_pos[0])))):
+                    if first_destination < 0:
+                        if second_destination > 0:
+                            if (before_pos[0] + i, before_pos[1] - i) in opponent:
+                                return True
+                        else:
+                            if (before_pos[0] - i, before_pos[1] - i) in opponent:
+                                return True
+                    else:
+                        if second_destination > 0:
+                            if (before_pos[0] + i, before_pos[1] + i) in opponent:
+                                return True
+                        else:
+                            if (before_pos[0] - i, before_pos[1] + i) in opponent:
+                                return True
         return False
 
     def display_moves(self, moves):
@@ -187,6 +282,6 @@ class Game(Settings):
                 piece.queen = True
         if next_jump:
             pygame.draw.circle(self.screen, player.queen_color, (self.piece_center[0] * (2 * pos[0] + 1),
-                                                    self.piece_center[1] * (2 * pos[1] + 1)),
+                                                                 self.piece_center[1] * (2 * pos[1] + 1)),
                                self.piece_radius)
             pygame.display.flip()
